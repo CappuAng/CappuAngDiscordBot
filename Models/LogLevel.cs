@@ -1,4 +1,4 @@
-namespace CappuAng.DiscordBot.Models;
+namespace CappuAngDiscordBot.Models;
 
 public enum LogLevel : byte
 {

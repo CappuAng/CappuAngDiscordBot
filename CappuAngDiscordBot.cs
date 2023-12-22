@@ -1,17 +1,17 @@
 using System.Text.Json;
-using CappuAng.DiscordBot.Controllers;
-using CappuAng.DiscordBot.Models;
+using CappuAngDiscordBot.Controllers;
+using CappuAngDiscordBot.Models;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CappuAng.DiscordBot;
+namespace CappuAngDiscordBot;
 
-public class CappuAng
+public class CappuAngDiscordBot
 {
-	private static readonly DiscordSocketConfig _discordSocketConfig =
+	private static readonly DiscordSocketConfig discordSocketConfig =
 		new()
 		{
 			GatewayIntents =
@@ -19,10 +19,10 @@ public class CappuAng
 				| GatewayIntents.MessageContent
 		};
 
-	private static readonly IServiceProvider _serviceProvider = new ServiceCollection()
-		.AddSingleton(GetConfiguration())
-		.AddSingleton(_discordSocketConfig)
-		.AddSingleton(new DiscordSocketClient(_discordSocketConfig))
+	private static readonly IServiceProvider serviceProvider = new ServiceCollection()
+		.AddSingleton(CappuAngDiscordBot.GetConfiguration())
+		.AddSingleton(CappuAngDiscordBot.discordSocketConfig)
+		.AddSingleton(new DiscordSocketClient(CappuAngDiscordBot.discordSocketConfig))
 		.AddSingleton<Logger>()
 		.AddSingleton<CommandService>()
 		.AddSingleton<TextCommandController>()
@@ -32,10 +32,10 @@ public class CappuAng
 
 	private static async Task Main()
 	{
-		DiscordSocketClient discordSocketClient = _serviceProvider.GetRequiredService<DiscordSocketClient>();
-		Configuration configuration = _serviceProvider.GetRequiredService<Configuration>();
-		await _serviceProvider.GetRequiredService<TextCommandController>().Initialize();
-		await _serviceProvider.GetRequiredService<SlashCommandController>().Initialize();
+		DiscordSocketClient discordSocketClient = CappuAngDiscordBot.serviceProvider.GetRequiredService<DiscordSocketClient>();
+		Configuration configuration = CappuAngDiscordBot.serviceProvider.GetRequiredService<Configuration>();
+		await CappuAngDiscordBot.serviceProvider.GetRequiredService<TextCommandController>().Initialize();
+		await CappuAngDiscordBot.serviceProvider.GetRequiredService<SlashCommandController>().Initialize();
 
 		discordSocketClient.Log += Logger.Log;
 
@@ -49,12 +49,17 @@ public class CappuAng
 		try
 		{
 			return JsonSerializer.Deserialize<Configuration>(File.ReadAllText("Configuration.json"))
-			       ?? throw new ArgumentNullException();
+				?? throw new ArgumentNullException();
 		}
 		catch (Exception exception)
 		{
 			_ = Logger.Log(
-				new Log { DateTime = DateTime.Now, Message = exception.Message, Level = LogLevel.Error }
+				new Log
+				{
+					DateTime = DateTime.Now,
+					Message = exception.Message,
+					Level = LogLevel.Error
+				}
 			);
 
 			Environment.Exit(1);

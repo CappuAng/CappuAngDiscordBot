@@ -1,6 +1,6 @@
 using Discord.Interactions;
 
-namespace CappuAng.DiscordBot.Models;
+namespace CappuAngDiscordBot.Models;
 
 public abstract class SlashCommand : InteractionModuleBase<SocketInteractionContext>
 {

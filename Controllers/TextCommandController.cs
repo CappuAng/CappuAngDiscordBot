@@ -1,9 +1,9 @@
 using System.Reflection;
-using CappuAng.DiscordBot.Models;
+using CappuAngDiscordBot.Models;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace CappuAng.DiscordBot.Controllers;
+namespace CappuAngDiscordBot.Controllers;
 
 public class TextCommandController(
     DiscordSocketClient discordSocketClient,
@@ -28,8 +28,8 @@ public class TextCommandController(
 
     public Task Initialize()
     {
-        discordSocketClient.Ready += RegisterTextCommands;
-        discordSocketClient.MessageReceived += HandleTextCommand;
+        this.discordSocketClient.Ready += this.RegisterTextCommands;
+        this.discordSocketClient.MessageReceived += this.HandleTextCommand;
         return Task.CompletedTask;
     }
 
@@ -39,10 +39,10 @@ public class TextCommandController(
         {
             await Logger.Log("Registering text commands...", LogLevel.Information);
 
-            foreach (Type textCommand in _textCommands)
+            foreach (Type textCommand in TextCommandController._textCommands)
             {
                 await Logger.Log($"Registering text command: {textCommand.Name}...", LogLevel.Information);
-                ModuleInfo moduleInfo = await commandService.AddModuleAsync(textCommand, serviceProvider);
+                ModuleInfo moduleInfo = await this.commandService.AddModuleAsync(textCommand, this.serviceProvider);
                 await Logger.Log($"Registered text command: {moduleInfo.Name}", LogLevel.Success);
             }
 
@@ -70,7 +70,7 @@ public class TextCommandController(
             bool hasPrefix = false;
             int argumentPosition = 0;
 
-            foreach (string prefix in configuration.Prefixes)
+            foreach (string prefix in this.configuration.Prefixes)
             {
                 if (socketUserMessage.HasStringPrefix(prefix, ref argumentPosition))
                 {
@@ -81,7 +81,7 @@ public class TextCommandController(
 
             if (
                 !hasPrefix
-                && socketUserMessage.HasMentionPrefix(discordSocketClient.CurrentUser, ref argumentPosition)
+                && socketUserMessage.HasMentionPrefix(this.discordSocketClient.CurrentUser, ref argumentPosition)
             )
                 hasPrefix = true;
 
@@ -89,8 +89,8 @@ public class TextCommandController(
                 return;
 
             // Execute the command
-            SocketCommandContext socketCommandContext = new(discordSocketClient, socketUserMessage);
-            _ = await commandService.ExecuteAsync(socketCommandContext, argumentPosition, serviceProvider);
+            SocketCommandContext socketCommandContext = new(this.discordSocketClient, socketUserMessage);
+            _ = await this.commandService.ExecuteAsync(socketCommandContext, argumentPosition, this.serviceProvider);
         }
         catch (Exception exception)
         {

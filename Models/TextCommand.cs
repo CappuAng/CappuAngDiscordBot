@@ -1,6 +1,6 @@
 using Discord.Commands;
 
-namespace CappuAng.DiscordBot.Models;
+namespace CappuAngDiscordBot.Models;
 
 public abstract class TextCommand : ModuleBase<SocketCommandContext>
 {

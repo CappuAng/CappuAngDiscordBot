@@ -1,7 +1,7 @@
-using CappuAng.DiscordBot.Models;
+using CappuAngDiscordBot.Models;
 using Discord;
 
-namespace CappuAng.DiscordBot.Controllers;
+namespace CappuAngDiscordBot.Controllers;
 
 public class Logger
 {
@@ -21,7 +21,7 @@ public class Logger
     }
 
     public static Task Log(string message, LogLevel logLevel) =>
-        Log(
+        Logger.Log(
             new Log
             {
                 DateTime = DateTime.Now,
@@ -31,7 +31,7 @@ public class Logger
         );
 
     public static Task Log(LogMessage logMessage) =>
-        Log(
+        Logger.Log(
             new Log
             {
                 DateTime = DateTime.Now,
